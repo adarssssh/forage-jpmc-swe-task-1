@@ -216,6 +216,31 @@ def get(req_handler, routes):
                 return
 
 
+# def run(routes, host='0.0.0.0', port=8080):
+#     """ Runs a class as a server whose methods have been decorated with
+#         @route.
+#     """
+
+#     class RequestHandler(http.server.BaseHTTPRequestHandler):
+#         def log_message(self, *args, **kwargs):
+#             pass
+
+#         def do_GET(self):
+#             get(self, routes)
+
+#     server = ThreadedHTTPServer((host, port), RequestHandler)
+#     thread = threading.Thread(target=server.serve_forever)
+#     thread.daemon = True
+#     thread.start()
+#     print('HTTP server started on port 8080')
+#     while True:
+#         from time import sleep
+#         sleep(1)
+#         server.shutdown()
+#         server.start()
+#         server.waitForThread()
+
+
 def run(routes, host='0.0.0.0', port=8080):
     """ Runs a class as a server whose methods have been decorated with
         @route.
@@ -229,16 +254,17 @@ def run(routes, host='0.0.0.0', port=8080):
             get(self, routes)
 
     server = ThreadedHTTPServer((host, port), RequestHandler)
-    thread = threading.Thread(target=server.serve_forever)
-    thread.daemon = True
-    thread.start()
-    print('HTTP server started on port 8080')
-    while True:
-        from time import sleep
-        sleep(1)
-    server.shutdown()
-    server.start()
-    server.waitForThread()
+
+    try:
+        print(f'HTTP server started on port {port}')
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.shutdown()
+        server.server_close()
+        print(f'Server on port {port} has been shut down.')
+
 
 
 ################################################################################
